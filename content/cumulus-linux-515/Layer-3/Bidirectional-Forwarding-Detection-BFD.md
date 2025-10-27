@@ -9,13 +9,13 @@ toc: 3
 Cumulus Linux supports BFD with BGP, OSPF, PIM, and static routes and on interfaces, subinterfaces, and bonds.
 
 {{%notice note%}}
-Every BFD interface requires an IP address. The neighbor IP address for a single hop BFD session must exist in the ARP table before BFD can start sending control packets.
+BFD is supported on both numbered and unnumbered interfaces, and it is available for both single-hop and multi-hop neighbors.
 {{%/notice%}}
 
 {{%notice note%}}
 Cumulus Linux does not support:
 - BFD demand mode
-- Dynamic BFD timer negotiation on an existing session. Any change to the timer values takes effect only when the session goes down and comes back up.
+- Dynamic BFD timer negotiation on an existing session is supported.
 {{%/notice%}}
 
 ## Enable BFD
@@ -54,12 +54,12 @@ When you change the BFD state, the FRR service will restart, affecting all confi
 
 You can configure BFD with NVUE or vtysh commands.
 
-To configure BFD, you configure a BFD profile, then attach the profile to the client, such as a BGP neighbor or peer group, OSPF interface, PIM session, or static route. The BFD profile includes configuration parameters such detect multiplier, transmit interval, receive interval, and minimum expected TTL.
+To configure BFD, you configure a BFD profile, then attach the profile to the client, such as a BGP neighbor or peer group, OSPFV2 interface, PIM session, or static route. The BFD profile includes configuration parameters such detect multiplier, transmit interval, receive interval, minimum expected TTL, passive-mode and admin state.
 
 ### Configure a BFD Profile
 
-To configure BFD, you must create a BFD profile that includes the following options:
-- The detection time multiplier to determine packet loss. The remote transmission interval is multiplied by this value to determine the connection loss detection timer. You can set a value between 1 and 255. The default value is 3.
+To configure BFD, you must create a BFD profile that optionally includes the following parameters:
+- The detection time multiplier to determine packet loss. The detection timeout is calculated by multiplying the detection multiplier with the greater value between the local receive (RX) and remote transmit (TX) intervals. You can set a value between 1 and 255. The default value is 3.
 - The minimum interval for transmitting BFD control packets. You can set a value between 10 and 4294967 milliseconds. The default value is 300.
 - The minimum interval between the received BFD control packets. You can set a value between 10 and 4294967 milliseconds. The default value is 300.
 - Shutdown, which enables or disables the peer. When the peer is disabled the switch sends an `administrative down` message to the remote peer. The default value is `disabled`.
